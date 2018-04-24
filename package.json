@@ -1,0 +1,14 @@
+{
+  "name": "insta-pwa",
+  "version": "1.0.0",
+  "description": "insta-pw",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1"
+  },
+  "author": "telenord",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^0.10.0"
+  }
+}
