@@ -44,36 +44,52 @@ self.addEventListener('activate', (event) => {
   );
   return self.clients.claim();
 });
-
+// network-first with cache strategy
 self.addEventListener('fetch', (event) => {
-  console.log('SW fetch ' + event);
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(res => {
-        if (res) {
-          return res;
-        }
-        else {
-          return fetch(event.request)
-            .then(res => {
-              return caches.open(CACHE_DYNAMIC_NAME)
-                .then(cache => {
-                  console.log(cache);
-                  cache.put(event.request.url, res.clone());
-                  return res;
-                })
-            })
-
-        }
+        return caches.open(CACHE_DYNAMIC_NAME)
+          .then(cache => {
+            cache.put(event.request.url, res.clone());
+            return res;
+          })
       })
       .catch(err => {
-        return caches.open(CACHE_STATIC_NAME)
-          .then(cache => {
-            return cache.match('/offline.html');
-          })
+        return caches.match(event.request)
       })
   )
 });
+
+// self.addEventListener('fetch', (event) => {
+//   console.log('SW fetch ' + event);
+//   event.respondWith(
+//     caches.match(event.request)
+//       .then(res => {
+//         if (res) {
+//           return res;
+//         }
+//         else {
+//           return fetch(event.request)
+//             .then(res => {
+//               return caches.open(CACHE_DYNAMIC_NAME)
+//                 .then(cache => {
+//                   console.log(cache);
+//                   cache.put(event.request.url, res.clone());
+//                   return res;
+//                 })
+//             })
+//
+//         }
+//       })
+//       .catch(err => {
+//         return caches.open(CACHE_STATIC_NAME)
+//           .then(cache => {
+//             return cache.match('/offline.html');
+//           })
+//       })
+//   )
+// });
 
 // cache-only strategy
 // self.addEventListener('fetch', (event) => {
